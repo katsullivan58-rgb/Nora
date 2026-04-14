@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -88,20 +89,25 @@ app.post('/api/sms', async (req, res) => {
     return res.status(400).json({ error: 'Phone and message required' });
   }
 
-  const smsBody = `💜 NORA – Your Maternal Health Companion\n\n${message}\n\nAlways consult your healthcare provider for personalized medical advice.`;
+  const normalized = phone.replace(/\D/g, '');
+  const e164 = normalized.startsWith('1') ? `+${normalized}` : `+1${normalized}`;
+
+  const smsBody = message.length > 900 ? message.substring(0, 900) + '...\n\nConsult your healthcare provider for personalized advice.' : message;
 
   try {
+    console.log('Sending SMS to:', e164, 'key:', process.env.TEXTBELT_API_KEY ? 'loaded' : 'MISSING');
     const response = await fetch('https://textbelt.com/text', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        phone: phone,
+        phone: e164,
         message: smsBody,
         key: process.env.TEXTBELT_API_KEY,
       }),
     });
 
     const data = await response.json();
+    console.log('Textbelt response:', data);
 
     if (data.success) {
       res.json({ success: true });
@@ -109,8 +115,8 @@ app.post('/api/sms', async (req, res) => {
       res.status(500).json({ error: data.error || 'Failed to send SMS' });
     }
   } catch (err) {
-    console.error('Textbelt error:', err);
-    res.status(500).json({ error: 'Failed to send SMS' });
+    console.error('Textbelt error:', err.message);
+    res.status(500).json({ error: err.message || 'Failed to send SMS' });
   }
 });
 

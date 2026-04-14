@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NORA — Live Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --plum: #3D1A4B; --plum-light: #5C2E72; --rose: #C4566A;
+      --blush: #F2C4CE; --cream: #FDF6EE; --gold: #D4A843;
+      --text: #1A0D22; --muted: #7A5E8A;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    header { background: var(--plum); color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; }
+    .logo span { color: var(--gold); }
+    .header-center { font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+    .back-link { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.85rem; }
+    .back-link:hover { color: white; }
+    .suggested-bar { background: white; border-bottom: 1px solid rgba(61,26,75,0.08); padding: 0.75rem 1.5rem; display: flex; gap: 0.6rem; align-items: center; flex-shrink: 0; overflow-x: auto; }
+    .suggested-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+    .suggested-btn { background: var(--cream); border: 1.5px solid rgba(61,26,75,0.15); border-radius: 100px; padding: 0.45rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--plum); cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+    .suggested-btn:hover { background: var(--blush); border-color: var(--rose); color: var(--rose); }
+    .chat-container { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+    .message { display: flex; flex-direction: column; animation: msgIn 0.3s ease both; max-width: 75%; }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .message.user { align-self: flex-end; align-items: flex-end; }
+    .message.nora { align-self: flex-start; align-items: flex-start; }
+    .msg-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.3rem; color: var(--muted); }
+    .message.nora .msg-label { color: var(--rose); }
+    .msg-bubble { padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.65; }
+    .message.user .msg-bubble { background: var(--plum); color: white; border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; }
+    .message.nora .msg-bubble { background: white; color: var(--text); border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; border: 1px solid rgba(61,26,75,0.08); box-shadow: 0 2px 12px rgba(61,26,75,0.06); }
+    .typing-indicator { display: flex; align-items: center; gap: 0.4rem; padding: 1rem 1.25rem; background: white; border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; border: 1px solid rgba(61,26,75,0.08); width: fit-content; }
+    .typing-dot { width: 8px; height: 8px; background: var(--muted); border-radius: 50%; animation: bounce 1.2s infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-5px); opacity: 1; } }
+    .sms-card { background: white; border: 1.5px solid var(--blush); border-radius: 1.25rem; padding: 1.25rem 1.5rem; margin-top: 0.5rem; max-width: 380px; animation: msgIn 0.4s ease both; box-shadow: 0 4px 20px rgba(196,86,106,0.1); }
+    .sms-card-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--plum); margin-bottom: 0.25rem; }
+    .sms-card-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
+    .sms-input { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid rgba(61,26,75,0.15); border-radius: 0.65rem; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s; margin-bottom: 0.6rem; }
+    .sms-input:focus { border-color: var(--rose); }
+    .consent-row { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.9rem; }
+    .consent-row input[type="checkbox"] { margin-top: 2px; accent-color: var(--rose); flex-shrink: 0; }
+    .consent-row label { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+    .text-me-btn { width: 100%; background: var(--rose); color: white; border: none; border-radius: 0.65rem; padding: 0.8rem; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+    .text-me-btn:hover:not(:disabled) { background: var(--plum); }
+    .text-me-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .sms-success { text-align: center; padding: 1rem; color: #2D7A5F; font-weight: 600; font-size: 0.9rem; }
+    .input-bar { flex-shrink: 0; background: white; border-top: 1px solid rgba(61,26,75,0.08); padding: 1rem 1.5rem; display: flex; gap: 0.75rem; align-items: center; }
+    .chat-input { flex: 1; padding: 0.9rem 1.2rem; border: 2px solid rgba(61,26,75,0.15); border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s; }
+    .chat-input:focus { border-color: var(--rose); }
+    .send-btn { width: 46px; height: 46px; background: var(--plum); color: white; border: none; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+    .send-btn:hover:not(:disabled) { background: var(--rose); transform: scale(1.05); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">N<span>O</span>RA</div>
+    <div class="header-center">Maternal Health Companion — Live Demo</div>
+    <a href="index.html" class="back-link">← Home</a>
+  </header>
+
+  <div class="suggested-bar">
+    <span class="suggested-label">Try asking:</span>
+    <button class="suggested-btn" onclick="fillQuestion('What should I eat during pregnancy?')">🥗 Nutrition during pregnancy</button>
+    <button class="suggested-btn" onclick="fillQuestion('What exercises are safe during pregnancy and how big is my baby?')">🤸🏾‍♀️ Safe exercises + baby size</button>
+    <button class="suggested-btn" onclick="fillQuestion('Can I eat deli meat while pregnant?')">🥪 Can I eat deli meat?</button>
+  </div>
+
+  <div class="chat-container" id="chatContainer">
+    <div class="message nora">
+      <div class="msg-label">NORA</div>
+      <div class="msg-bubble">Hi! I'm NORA, your maternal health companion. 💜 I'm here to help answer pregnancy questions about nutrition, exercise, and baby growth. Ask me anything!</div>
+    </div>
+  </div>
+
+  <div class="input-bar">
+    <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question..." onkeydown="if(event.key==='Enter') sendMessage()" />
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
+
+  <script>
+    let isLoading = false;
+    let lastResponse = '';
+
+    function fillQuestion(q) {
+      document.getElementById('chatInput').value = q;
+      document.getElementById('chatInput').focus();
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const question = input.value.trim();
+      if (!question || isLoading) return;
+      input.value = '';
+      isLoading = true;
+      document.getElementById('sendBtn').disabled = true;
+      const chat = document.getElementById('chatContainer');
+
+      appendMessage('user', 'You', question);
+
+      const typingEl = document.createElement('div');
+      typingEl.className = 'message nora';
+      typingEl.id = 'typing';
+      typingEl.innerHTML = `<div class="msg-label">NORA</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+      chat.appendChild(typingEl);
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, questionIndex: -1 })
+        });
+        const data = await res.json();
+        lastResponse = data.response;
+        document.getElementById('typing')?.remove();
+        appendMessage('nora', 'NORA', data.response);
+        appendSmsCard();
+      } catch (err) {
+        document.getElementById('typing')?.remove();
+        appendMessage('nora', 'NORA', "I'm sorry, I had trouble connecting. Please try again.");
+      }
+
+      isLoading = false;
+      document.getElementById('sendBtn').disabled = false;
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function appendMessage(role, label, text) {
+      const chat = document.getElementById('chatContainer');
+      const el = document.createElement('div');
+      el.className = `message ${role}`;
+      el.innerHTML = `<div class="msg-label">${label}</div><div class="msg-bubble">${text.replace(/\n/g, '<br/>')}</div>`;
+      chat.appendChild(el);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function appendSmsCard() {
+      const chat = document.getElementById('chatContainer');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message nora';
+      wrapper.style.maxWidth = '420px';
+      wrapper.innerHTML = `
+        <div class="sms-card" id="smsCard">
+          <div class="sms-card-title">📱 Want these resources by text?</div>
+          <div class="sms-card-sub">Enter your info and I'll send this straight to your phone.</div>
+          <input type="text" class="sms-input" id="smsName" placeholder="First name" />
+          <input type="tel" class="sms-input" id="smsPhone" placeholder="Phone number (e.g. 214-555-0123)" />
+          <div class="consent-row">
+            <input type="checkbox" id="smsConsent" />
+            <label for="smsConsent">I agree to receive a one-time text message with pregnancy resources from NORA.</label>
+          </div>
+          <button class="text-me-btn" onclick="sendSms()">Text me this 💜</button>
+        </div>`;
+      chat.appendChild(wrapper);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function sendSms() {
+      const name = document.getElementById('smsName').value.trim();
+      const phone = document.getElementById('smsPhone').value.trim();
+      const consent = document.getElementById('smsConsent').checked;
+      if (!name) { alert('Please enter your first name.'); return; }
+      if (!phone) { alert('Please enter your phone number.'); return; }
+      if (!consent) { alert('Please check the consent box.'); return; }
+
+      const btn = document.querySelector('.text-me-btn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      const personalizedMsg = `Hi ${name}! Here's your pregnancy support from NORA 💜\n\n${lastResponse}\n\nAlways consult your healthcare provider for personalized advice.`;
+
+      try {
+        const res = await fetch('/api/sms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, message: personalizedMsg })
+        });
+        const data = await res.json();
+        const card = document.getElementById('smsCard');
+        if (data.success) {
+          card.innerHTML = `<div class="sms-success">✅ Text sent to ${name}'s phone!</div>`;
+          setTimeout(() => {
+            appendMessage('nora', 'NORA', `Thanks ${name}! I just sent this to your phone. 💜 Feel free to ask me anything else!`);
+            document.getElementById('chatContainer').scrollTop = 99999;
+          }, 600);
+        } else {
+          card.innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ ${data.error || 'Could not send. Please try again.'}</div>`;
+        }
+      } catch (err) {
+        document.getElementById('smsCard').innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ Network error. Please try again.</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
