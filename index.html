@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NORA — Navigating Obstetric Resources & Access</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --plum: #3D1A4B;
+      --plum-light: #5C2E72;
+      --rose: #C4566A;
+      --blush: #F2C4CE;
+      --cream: #FDF6EE;
+      --gold: #D4A843;
+      --text: #1A0D22;
+      --muted: #7A5E8A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      background: rgba(253,246,238,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(61,26,75,0.08);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--plum);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo span { color: var(--rose); }
+
+    nav a {
+      text-decoration: none;
+      color: var(--plum);
+      font-weight: 500;
+      font-size: 0.9rem;
+      letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--rose); }
+
+    .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+
+    .btn {
+      display: inline-block;
+      padding: 0.7rem 1.8rem;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.25s;
+      cursor: pointer;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--plum);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--plum-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(61,26,75,0.25); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--plum);
+      border: 2px solid var(--plum);
+    }
+    .btn-outline:hover { background: var(--plum); color: white; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 3rem 4rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      gap: 4rem;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--blush);
+      color: var(--rose);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--rose);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--plum);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--rose);
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+    }
+
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .hero-visual {
+      position: relative;
+    }
+
+    .hero-card {
+      background: var(--plum);
+      border-radius: 2rem;
+      padding: 2.5rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: var(--rose);
+      border-radius: 50%;
+      opacity: 0.15;
+    }
+
+    .hero-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: -30px;
+      width: 140px; height: 140px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.12;
+    }
+
+    .chat-bubble {
+      background: rgba(255,255,255,0.1);
+      border-radius: 1rem 1rem 1rem 0.25rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .chat-bubble.user {
+      background: rgba(196,86,106,0.25);
+      border-radius: 1rem 1rem 0.25rem 1rem;
+      text-align: right;
+      margin-left: 2rem;
+      border-color: rgba(196,86,106,0.3);
+    }
+
+    .chat-bubble.nora {
+      margin-right: 2rem;
+    }
+
+    .nora-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-item {
+      background: rgba(255,255,255,0.08);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.2rem;
+    }
+
+    /* STATS SECTION */
+    .stats-section {
+      background: var(--plum);
+      padding: 5rem 3rem;
+    }
+
+    .stats-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .stats-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: white;
+      line-height: 1.3;
+    }
+
+    .stats-headline span { color: var(--gold); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.07);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat-card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--rose);
+      line-height: 1;
+    }
+
+    .stat-card p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    /* HOW IT WORKS */
+    .how-section {
+      padding: 6rem 3rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--plum);
+      margin-bottom: 3.5rem;
+      max-width: 520px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .step-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      border: 1px solid rgba(61,26,75,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .step-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(61,26,75,0.12);
+    }
+
+    .step-num {
+      width: 40px; height: 40px;
+      background: var(--blush);
+      color: var(--rose);
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .step-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--plum);
+      margin-bottom: 0.6rem;
+    }
+
+    .step-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* DEMO SECTION */
+    .demo-section {
+      background: linear-gradient(135deg, var(--plum) 0%, #6B2F8A 100%);
+      padding: 6rem 3rem;
+      text-align: center;
+    }
+
+    .demo-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .demo-section h2 em { color: var(--gold); font-style: italic; }
+
+    .demo-section p {
+      color: rgba(255,255,255,0.7);
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* MISSION */
+    .mission-section {
+      padding: 6rem 3rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .mission-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--plum);
+      margin-bottom: 1.5rem;
+      line-height: 1.25;
+    }
+
+    .mission-section p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 1.25rem;
+    }
+
+    .pill-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+
+    .pill {
+      background: var(--blush);
+      color: var(--plum);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+    }
+
+    .mission-visual {
+      background: var(--plum);
+      border-radius: 2rem;
+      padding: 2.5rem;
+      color: white;
+    }
+
+    .advisor-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.08);
+      border-radius: 1rem;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 0.8rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .advisor-avatar {
+      width: 44px; height: 44px;
+      background: var(--rose);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .advisor-info h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .advisor-info p {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 0;
+      margin-top: 0;
+      line-height: 1.4;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 2rem 3rem;
+      font-size: 0.85rem;
+    }
+
+    footer strong { color: white; }
+
+    /* ANIMATIONS */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .hero-visual { animation: float 5s ease-in-out infinite; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-content > * {
+      animation: fadeUp 0.7s ease both;
+    }
+    .hero-eyebrow { animation-delay: 0.1s; }
+    .hero h1 { animation-delay: 0.25s; }
+    .hero p { animation-delay: 0.4s; }
+    .hero-ctas { animation-delay: 0.55s; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; }
+      .hero-visual { display: none; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-inner { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .mission-section { grid-template-columns: 1fr; }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">N<span>O</span>RA</div>
+    <div class="nav-links">
+      <a href="#how">How It Works</a>
+      <a href="#mission">Our Mission</a>
+      <a href="demo.html" class="btn btn-primary">Try the Demo →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">AI-Powered Maternal Health</div>
+      <h1>Every mother deserves <em>answers,</em> not just appointments.</h1>
+      <p>NORA is an AI health companion built specifically for Black women — providing 24/7 pregnancy support, resource navigation, and early complication detection, all free of charge.</p>
+      <div class="hero-ctas">
+        <a href="demo.html" class="btn btn-primary">Experience NORA Live</a>
+        <a href="#mission" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="nora-tag">NORA is responding...</div>
+        <div class="chat-bubble user">Can I eat deli meat while pregnant? 🤔</div>
+        <div class="chat-bubble nora">Great question! Deli meats can carry Listeria, which is harmful during pregnancy. It's safest to heat them until steaming hot before eating. I've sent some resources to your care team as well.</div>
+        <div class="stat-strip">
+          <div class="stat-item">
+            <div class="stat-num">24/7</div>
+            <div class="stat-label">Always On</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">Free</div>
+            <div class="stat-label">To Patients</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">3–4×</div>
+            <div class="stat-label">Mortality Gap</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="stats-inner">
+      <div class="stats-headline">The <span>crisis</span> we're solving, with data.</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-num">3–4×</div>
+          <p>Black mothers are 3–4× more likely to die from pregnancy complications than white mothers.</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num">$32B+</div>
+          <p>Annual economic cost of maternal health inequity — a massive, preventable drain on the healthcare system.</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num">0</div>
+          <p>Support exists for mothers <em>between</em> appointments, leaving them vulnerable and alone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how">
+    <div class="section-tag">How It Works</div>
+    <h2 class="section-title">NORA meets you wherever you are.</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3>Ask Anything</h3>
+        <p>Get instant, culturally competent answers to your pregnancy questions — nutrition, exercise, symptoms, and more.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3>Navigate Resources</h3>
+        <p>NORA connects you to local clinics, support groups, WIC offices, and maternal health programs tailored to you.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3>Early Detection</h3>
+        <p>Symptom tracking alerts your care team to potential complications before they become emergencies.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <h3>Provider Loop</h3>
+        <p>Responses and resources are automatically shared with your physician, keeping the whole team aligned.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO CTA -->
+  <section class="demo-section">
+    <h2>See <em>NORA</em> in action.</h2>
+    <p>Ask about nutrition, exercise, your baby's development — then send the response straight to your phone.</p>
+    <a href="demo.html" class="btn btn-primary" style="font-size:1rem; padding: 1rem 2.5rem;">Launch Interactive Demo →</a>
+  </section>
+
+  <!-- MISSION -->
+  <section class="mission-section" id="mission">
+    <div>
+      <div class="section-tag">Our Mission</div>
+      <h2>Built for and with Black women.</h2>
+      <p>NORA was founded on a simple truth: the healthcare system has failed Black mothers. Medical mistrust, systemic racism, and gaps in care aren't just statistics — they are lived realities that cost lives.</p>
+      <p>NORA isn't a generic chatbot. It's a culturally competent companion, deeply integrated with EHR systems, completely free to patients, and designed from day one to close the gap.</p>
+      <div class="pill-badges">
+        <span class="pill">Cultural Competency</span>
+        <span class="pill">EHR Integration</span>
+        <span class="pill">Free to Patients</span>
+        <span class="pill">24/7 Support</span>
+        <span class="pill">Resource Navigation</span>
+      </div>
+    </div>
+    <div class="mission-visual">
+      <p style="font-size:0.75rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:1.25rem;font-weight:600;">Board of Advisors</p>
+      <div class="advisor-card">
+        <div class="advisor-avatar">JH</div>
+        <div class="advisor-info">
+          <h4>Dr. Jacquelyne Howard</h4>
+          <p>Senior Professor of Practice, Connolly Alexander Institute for Data Science</p>
+        </div>
+      </div>
+      <div class="advisor-card">
+        <div class="advisor-avatar">DM</div>
+        <div class="advisor-info">
+          <h4>Dylan Murray</h4>
+          <p>Chief Operating Officer, Exactics Biotech</p>
+        </div>
+      </div>
+      <div class="advisor-card">
+        <div class="advisor-avatar">MF</div>
+        <div class="advisor-info">
+          <h4>Mara Baumgarten Force</h4>
+          <p>Board Member, Touro LCMC Health</p>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,0.1);">
+        <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.6;margin:0;">Presented by <strong style="color:white;">Jordan Williams</strong> · Pitch Competition 2025</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <strong>NORA</strong> — Navigating Obstetric Resources &amp; Access &nbsp;|&nbsp; AI-Powered Maternal Health Support &nbsp;|&nbsp; Built for Black Women, By Design.
+  </footer>
+
+</body>
+</html>

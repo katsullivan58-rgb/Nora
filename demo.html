@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NORA — Live Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --plum: #3D1A4B;
+      --plum-light: #5C2E72;
+      --rose: #C4566A;
+      --blush: #F2C4CE;
+      --cream: #FDF6EE;
+      --gold: #D4A843;
+      --text: #1A0D22;
+      --muted: #7A5E8A;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--plum);
+      color: white;
+      padding: 1.1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .logo span { color: var(--gold); }
+
+    .header-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .back-link {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: white; }
+
+    /* MAIN LAYOUT */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      max-width: 1100px;
+      margin: 2.5rem auto;
+      gap: 2rem;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    /* SIDEBAR */
+    .sidebar h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--plum);
+      margin-bottom: 0.4rem;
+    }
+
+    .sidebar .subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .question-btn {
+      width: 100%;
+      background: white;
+      border: 2px solid rgba(61,26,75,0.12);
+      border-radius: 1rem;
+      padding: 1.1rem 1.25rem;
+      text-align: left;
+      cursor: pointer;
+      margin-bottom: 0.75rem;
+      transition: all 0.25s;
+      font-family: 'DM Sans', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-btn:hover {
+      border-color: var(--rose);
+      transform: translateX(3px);
+      box-shadow: 0 4px 16px rgba(196,86,106,0.15);
+    }
+
+    .question-btn.active {
+      border-color: var(--rose);
+      background: var(--blush);
+    }
+
+    .q-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 0.3rem;
+    }
+
+    .q-text {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--plum);
+      line-height: 1.4;
+    }
+
+    .q-icon {
+      position: absolute;
+      right: 1.1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.3rem;
+    }
+
+    /* SMS SECTION */
+    .sms-section {
+      background: white;
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(61,26,75,0.08);
+      margin-top: 1rem;
+    }
+
+    .sms-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--plum);
+      margin-bottom: 0.3rem;
+    }
+
+    .sms-section p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .phone-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid rgba(61,26,75,0.15);
+      border-radius: 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 0.75rem;
+      background: var(--cream);
+    }
+
+    .phone-input:focus { border-color: var(--rose); }
+
+    .send-btn {
+      width: 100%;
+      background: var(--plum);
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .send-btn:hover:not(:disabled) { background: var(--plum-light); }
+    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .sms-status {
+      font-size: 0.8rem;
+      margin-top: 0.6rem;
+      text-align: center;
+      min-height: 1.2rem;
+    }
+
+    .sms-status.success { color: #2D7A5F; font-weight: 600; }
+    .sms-status.error { color: var(--rose); }
+
+    /* CHAT AREA */
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-radius: 1.5rem;
+      border: 1px solid rgba(61,26,75,0.08);
+      overflow: hidden;
+      min-height: 550px;
+    }
+
+    .chat-header {
+      background: var(--plum);
+      padding: 1.25rem 1.75rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nora-avatar {
+      width: 44px; height: 44px;
+      background: var(--rose);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .chat-header-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      background: #4ADE80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* MESSAGES */
+    .messages {
+      flex: 1;
+      padding: 2rem 1.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-height: 400px;
+      max-height: 500px;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      animation: msgIn 0.35s ease both;
+    }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user { align-items: flex-end; }
+    .message.nora { align-items: flex-start; }
+
+    .msg-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .message.user .msg-label { color: var(--muted); }
+    .message.nora .msg-label { color: var(--rose); }
+
+    .msg-bubble {
+      padding: 1rem 1.25rem;
+      border-radius: 1.25rem;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 85%;
+    }
+
+    .message.user .msg-bubble {
+      background: var(--plum);
+      color: white;
+      border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+    }
+
+    .message.nora .msg-bubble {
+      background: var(--cream);
+      color: var(--text);
+      border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+      border: 1px solid rgba(61,26,75,0.08);
+    }
+
+    /* TYPING INDICATOR */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 1rem 1.25rem;
+      background: var(--cream);
+      border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+      border: 1px solid rgba(61,26,75,0.08);
+      width: fit-content;
+    }
+
+    .typing-dot {
+      width: 8px; height: 8px;
+      background: var(--muted);
+      border-radius: 50%;
+      animation: typingBounce 1.2s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    /* RESOURCES PILLS */
+    .resources-section {
+      margin-top: 0.75rem;
+    }
+
+    .resources-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .resource-pill {
+      display: inline-block;
+      background: var(--blush);
+      color: var(--plum);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      margin: 0.2rem 0.2rem 0 0;
+    }
+
+    @media (max-width: 768px) {
+      main { grid-template-columns: 1fr; margin: 1.5rem auto; }
+      .chat-area { min-height: 400px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <div class="logo">N<span>O</span>RA</div>
+    </div>
+    <div class="header-tag">Interactive Demo — Judge Experience</div>
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </header>
+
+  <main>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h2>Ask NORA a question</h2>
+      <p class="subtitle">Tap one of the questions below to see NORA respond with real health guidance.</p>
+
+      <button class="question-btn" onclick="askQuestion(0)">
+        <div class="q-label">Question 1</div>
+        <div class="q-text">What should I eat during pregnancy? What foods and nutrients are most important?</div>
+        <span class="q-icon">🥗</span>
+      </button>
+
+      <button class="question-btn" onclick="askQuestion(1)">
+        <div class="q-label">Question 2</div>
+        <div class="q-text">What exercises are safe during pregnancy? How big is my baby right now?</div>
+        <span class="q-icon">🤸🏾‍♀️</span>
+      </button>
+
+      <button class="question-btn" onclick="askQuestion(2)">
+        <div class="q-label">Question 3</div>
+        <div class="q-text">Can I eat deli meat while pregnant? What foods should I avoid?</div>
+        <span class="q-icon">🥪</span>
+      </button>
+
+      <!-- SMS Section -->
+      <div class="sms-section">
+        <h3>📱 Text me this response</h3>
+        <p>Enter your phone number to receive NORA's latest response as an SMS — just like a real patient would.</p>
+        <input
+          type="tel"
+          class="phone-input"
+          id="phoneInput"
+          placeholder="+1 (555) 000-0000"
+        />
+        <button class="send-btn" id="sendSmsBtn" onclick="sendSms()" disabled>
+          Send via Text Message
+        </button>
+        <div class="sms-status" id="smsStatus"></div>
+      </div>
+    </aside>
+
+    <!-- CHAT AREA -->
+    <div class="chat-area">
+      <div class="chat-header">
+        <div class="nora-avatar">N</div>
+        <div class="chat-header-info">
+          <h3>NORA — Your Maternal Health Companion</h3>
+          <div class="status-dot">
+            <span class="dot"></span>
+            AI-Powered · Available 24/7 · Built for Black Women
+          </div>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">💬</div>
+          <p>Tap a question on the left to see NORA respond with personalized maternal health guidance.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      "What should I eat during pregnancy? What foods and nutrients are most important for a healthy pregnancy?",
+      "What exercises are safe to do during pregnancy? Also, how big is my baby at different stages of pregnancy?",
+      "Can I eat deli meat while pregnant? What foods should I avoid during pregnancy and why?"
+    ];
+
+    let lastResponse = '';
+    let isLoading = false;
+
+    async function askQuestion(index) {
+      if (isLoading) return;
+
+      // Highlight active button
+      document.querySelectorAll('.question-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === index);
+      });
+
+      const question = questions[index];
+      const messagesEl = document.getElementById('messages');
+      const emptyState = document.getElementById('emptyState');
+
+      // Remove empty state
+      if (emptyState) emptyState.remove();
+
+      // Add user message
+      appendMessage('user', 'You (Judge)', question);
+
+      // Show typing indicator
+      const typingEl = document.createElement('div');
+      typingEl.className = 'message nora';
+      typingEl.id = 'typing';
+      typingEl.innerHTML = `
+        <div class="msg-label">NORA</div>
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      messagesEl.appendChild(typingEl);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+
+      isLoading = true;
+      document.getElementById('sendSmsBtn').disabled = true;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, questionIndex: index })
+        });
+
+        const data = await res.json();
+        lastResponse = data.response;
+
+        // Remove typing indicator
+        document.getElementById('typing')?.remove();
+
+        // Add NORA response
+        appendMessage('nora', 'NORA', data.response, data.resources);
+
+        // Enable SMS button
+        document.getElementById('sendSmsBtn').disabled = false;
+
+      } catch (err) {
+        document.getElementById('typing')?.remove();
+        appendMessage('nora', 'NORA', 'I\'m sorry, I had trouble connecting. Please try again in a moment.');
+      }
+
+      isLoading = false;
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function appendMessage(role, label, text, resources) {
+      const messagesEl = document.getElementById('messages');
+      const msgEl = document.createElement('div');
+      msgEl.className = `message ${role}`;
+
+      let resourcesHtml = '';
+      if (resources && resources.length) {
+        resourcesHtml = `
+          <div class="resources-section">
+            <div class="resources-label">📚 Resources</div>
+            ${resources.map(r => `<span class="resource-pill">${r}</span>`).join('')}
+          </div>
+        `;
+      }
+
+      msgEl.innerHTML = `
+        <div class="msg-label">${label}</div>
+        <div class="msg-bubble">${text.replace(/\n/g, '<br/>')}</div>
+        ${resourcesHtml}
+      `;
+
+      messagesEl.appendChild(msgEl);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    async function sendSms() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      const statusEl = document.getElementById('smsStatus');
+
+      if (!phone) {
+        statusEl.textContent = 'Please enter a phone number.';
+        statusEl.className = 'sms-status error';
+        return;
+      }
+
+      if (!lastResponse) {
+        statusEl.textContent = 'Ask a question first to generate a response.';
+        statusEl.className = 'sms-status error';
+        return;
+      }
+
+      const btn = document.getElementById('sendSmsBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      statusEl.textContent = '';
+
+      try {
+        const res = await fetch('/api/sms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, message: lastResponse })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          statusEl.textContent = '✅ Message sent successfully!';
+          statusEl.className = 'sms-status success';
+        } else {
+          statusEl.textContent = `❌ ${data.error || 'Failed to send. Check your number.'}`;
+          statusEl.className = 'sms-status error';
+        }
+      } catch (err) {
+        statusEl.textContent = '❌ Network error. Please try again.';
+        statusEl.className = 'sms-status error';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Send via Text Message';
+    }
+  </script>
+
+</body>
+</html>
