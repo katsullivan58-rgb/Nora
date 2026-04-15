@@ -512,6 +512,71 @@
     .hero p { animation-delay: 0.4s; }
     .hero-ctas { animation-delay: 0.55s; }
 
+    .founder-section {
+  background: var(--plum);
+  padding: 6rem 3rem;
+}
+
+.founder-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.founder-section .section-tag {
+  color: var(--gold);
+}
+
+.founder-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.founder-quote {
+  font-size: 1.1rem;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 1.25rem;
+  font-style: italic;
+}
+
+.founder-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-top: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.founder-photos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.founder-photo-slot {
+  background: rgba(255,255,255,0.08);
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 1.25rem;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.9rem;
+  overflow: hidden;
+}
+
+.founder-photo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1.25rem;
+}
+
     @media (max-width: 900px) {
       .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; }
       .hero-visual { display: none; }
@@ -541,7 +606,7 @@
     <div class="hero-content">
       <div class="hero-eyebrow">AI-Powered Maternal Health</div>
       <h1>Every mother deserves <em>answers,</em> not just appointments.</h1>
-      <p>NORA is an AI health companion built specifically for Black women — providing 24/7 pregnancy support, resource navigation, and early complication detection, all free of charge.</p>
+      <p>NORA is an AI health companion built specifically for women, providing 24/7 pregnancy support, resource navigation, and early complication detection, all free of charge.</p>
       <div class="hero-ctas">
         <a href="demo.html" class="btn btn-primary">Experience NORA Live</a>
         <a href="#mission" class="btn btn-outline">Learn More</a>
@@ -581,7 +646,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-card-num">$32B+</div>
-          <p>Annual economic cost of maternal health inequity — a massive, preventable drain on the healthcare system.</p>
+          <p>Annual economic cost of maternal health inequity, a massive, preventable drain on the healthcare system.</p>
         </div>
         <div class="stat-card">
           <div class="stat-card-num">0</div>
@@ -599,7 +664,7 @@
       <div class="step-card">
         <div class="step-num">01</div>
         <h3>Ask Anything</h3>
-        <p>Get instant, culturally competent answers to your pregnancy questions — nutrition, exercise, symptoms, and more.</p>
+        <p>Get instant, culturally competent answers to your pregnancy questions: nutrition, exercise, symptoms, and more.</p>
       </div>
       <div class="step-card">
         <div class="step-num">02</div>
@@ -622,16 +687,37 @@
   <!-- DEMO CTA -->
   <section class="demo-section">
     <h2>See <em>NORA</em> in action.</h2>
-    <p>Ask about nutrition, exercise, your baby's development — then send the response straight to your phone.</p>
+    <p>Ask about nutrition, exercise, your baby's development, then send the response straight to your phone.</p>
     <a href="demo.html" class="btn btn-primary" style="font-size:1rem; padding: 1rem 2.5rem;">Launch Interactive Demo →</a>
   </section>
-
+  <!-- FOUNDER STORY -->
+  <section class="founder-section">
+    <div class="founder-inner">
+      <div class="section-tag">From the Founder</div>
+      <h2 class="founder-title">Why NORA exists.</h2>
+      <p class="founder-quote">"In my family, reproductive healthcare is remembered through stories that linger, stories of being ignored, turned away, or spoken over in moments that mattered most. Several of the women before me, including my great grandmother Ellenora, endured the violence of the eugenics era through forced sterilization, their choices taken and their voices silenced.</p>
+      <p class="founder-quote">These histories are not distant; they shape how care is experienced across generations. Black women reclaiming the technologies that have so often left us behind to build something better, creating not only change for ourselves but expanding what care can look like so that all women are seen, supported, and truly cared for."</p>
+      <p class="founder-name">— Jordan Williams, Founder of NORA</p>
+      <div class="founder-photos">
+        <div class="founder-photo-slot">
+      <img src="found1.jpg" alt="Family photo" />
+    </div>
+    <div class="founder-photo-slot">
+      <img src="found2.jpg" alt="Family photo" />
+    </div>
+    <div class="founder-photo-slot">
+      <img src="found3.jpg" alt="Family photo" />
+    </div>
+      </div>
+    </div>
+  </section>
+  <!-- MISSION -->
   <!-- MISSION -->
   <section class="mission-section" id="mission">
     <div>
       <div class="section-tag">Our Mission</div>
-      <h2>Built for and with Black women.</h2>
-      <p>NORA was founded on a simple truth: the healthcare system has failed Black mothers. Medical mistrust, systemic racism, and gaps in care aren't just statistics — they are lived realities that cost lives.</p>
+      <h2>Built for and with Women.</h2>
+      <p>NORA was founded on a simple truth: the healthcare system has failed Black mothers. Medical mistrust, systemic racism, and gaps in care aren't just statistics, they are lived realities that cost lives.</p>
       <p>NORA isn't a generic chatbot. It's a culturally competent companion, deeply integrated with EHR systems, completely free to patients, and designed from day one to close the gap.</p>
       <div class="pill-badges">
         <span class="pill">Cultural Competency</span>
@@ -644,34 +730,49 @@
     <div class="mission-visual">
       <p style="font-size:0.75rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:1.25rem;font-weight:600;">Board of Advisors</p>
       <div class="advisor-card">
-        <div class="advisor-avatar">JH</div>
+        <div class="advisor-avatar" style="background:none;padding:0;overflow:hidden;">
+          <img src="Jacque.jpg" style="width:44px;height:44px;object-fit:cover;border-radius:50%;" />
+        </div>
         <div class="advisor-info">
           <h4>Dr. Jacquelyne Howard</h4>
           <p>Senior Professor of Practice, Connolly Alexander Institute for Data Science</p>
         </div>
       </div>
       <div class="advisor-card">
-        <div class="advisor-avatar">DM</div>
+        <div class="advisor-avatar" style="background:none;padding:0;overflow:hidden;">
+          <img src="Dylan.avif" style="width:44px;height:44px;object-fit:cover;border-radius:50%;" />
+        </div>
         <div class="advisor-info">
           <h4>Dylan Murray</h4>
           <p>Chief Operating Officer, Exactics Biotech</p>
         </div>
       </div>
       <div class="advisor-card">
-        <div class="advisor-avatar">MF</div>
+        <div class="advisor-avatar" style="background:none;padding:0;overflow:hidden;">
+          <img src="Mara.jpg" style="width:44px;height:44px;object-fit:cover;border-radius:50%;" />
+        </div>
         <div class="advisor-info">
           <h4>Mara Baumgarten Force</h4>
           <p>Board Member, Touro LCMC Health</p>
         </div>
       </div>
+      <div class="advisor-card">
+        <div class="advisor-avatar" style="background:none;padding:0;overflow:hidden;">
+          <img src="Kat.jpeg" style="width:44px;height:44px;object-fit:cover;border-radius:50%;" />
+        </div>
+        <div class="advisor-info">
+          <h4>Kathryn Sullivan</h4>
+          <p>Finance & Computer Science Student, Tulane LePage Center Fellow</p>
+        </div>
+      </div>
       <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,0.1);">
-        <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.6;margin:0;">Presented by <strong style="color:white;">Jordan Williams</strong> · Pitch Competition 2025</p>
       </div>
     </div>
   </section>
 
+
   <footer>
-    <strong>NORA</strong> — Navigating Obstetric Resources &amp; Access &nbsp;|&nbsp; AI-Powered Maternal Health Support &nbsp;|&nbsp; Built for Black Women, By Design.
+    <strong>NORA</strong> — Navigating Obstetric Resources &amp; Access &nbsp;|&nbsp; AI-Powered Maternal Health Support &nbsp;|&nbsp; Built for Women, By Design.
   </footer>
 
 </body>

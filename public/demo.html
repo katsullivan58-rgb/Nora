@@ -61,7 +61,7 @@
 <body>
   <header>
     <div class="logo">N<span>O</span>RA</div>
-    <div class="header-center">Maternal Health Companion — Live Demo</div>
+    <div class="header-center">Talk to NORA</div>
     <a href="index.html" class="back-link">← Home</a>
   </header>
 
@@ -70,6 +70,9 @@
     <button class="suggested-btn" onclick="fillQuestion('What should I eat during pregnancy?')">🥗 Nutrition during pregnancy</button>
     <button class="suggested-btn" onclick="fillQuestion('What exercises are safe during pregnancy and how big is my baby?')">🤸🏾‍♀️ Safe exercises + baby size</button>
     <button class="suggested-btn" onclick="fillQuestion('Can I eat deli meat while pregnant?')">🥪 Can I eat deli meat?</button>
+    <button class="suggested-btn" onclick="fillQuestion('What vitamins should I take during pregnancy?')">💊 What vitamins should I take during pregnancy?</button>
+    <button class="suggested-btn" onclick="fillQuestion('What are warning signs I should watch for?')">⚠️ What are warning signs I should watch for?</button>
+    <button class="suggested-btn" onclick="fillQuestion('How big is my baby at 20 weeks?')">👶🏾 How big is my baby at 20 weeks?</button>
   </div>
 
   <div class="chat-container" id="chatContainer">
@@ -145,17 +148,10 @@
       const chat = document.getElementById('chatContainer');
       const wrapper = document.createElement('div');
       wrapper.className = 'message nora';
-      wrapper.style.maxWidth = '420px';
       wrapper.innerHTML = `
         <div class="sms-card" id="smsCard">
-          <div class="sms-card-title">📱 Want these resources by text?</div>
-          <div class="sms-card-sub">Enter your info and I'll send this straight to your phone.</div>
-          <input type="text" class="sms-input" id="smsName" placeholder="First name" />
-          <input type="tel" class="sms-input" id="smsPhone" placeholder="Phone number (e.g. 214-555-0123)" />
-          <div class="consent-row">
-            <input type="checkbox" id="smsConsent" />
-            <label for="smsConsent">I agree to receive a one-time text message with pregnancy resources from NORA.</label>
-          </div>
+          <div class="sms-card-title">📱 Want this sent to your phone?</div>
+          <div class="sms-card-sub">Tap the button to receive this response as a text message.</div>
           <button class="text-me-btn" onclick="sendSms()">Text me this 💜</button>
         </div>`;
       chat.appendChild(wrapper);
@@ -163,40 +159,32 @@
     }
 
     async function sendSms() {
-      const name = document.getElementById('smsName').value.trim();
-      const phone = document.getElementById('smsPhone').value.trim();
-      const consent = document.getElementById('smsConsent').checked;
-      if (!name) { alert('Please enter your first name.'); return; }
-      if (!phone) { alert('Please enter your phone number.'); return; }
-      if (!consent) { alert('Please check the consent box.'); return; }
-
       const btn = document.querySelector('.text-me-btn');
       btn.disabled = true;
       btn.textContent = 'Sending...';
-
-      const personalizedMsg = `Hi ${name}! Here's your pregnancy support from NORA 💜\n\n${lastResponse}\n\nAlways consult your healthcare provider for personalized advice.`;
 
       try {
         const res = await fetch('/api/sms', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone, message: personalizedMsg })
+          body: JSON.stringify({ phone: '2149806387', message: lastResponse })
         });
         const data = await res.json();
         const card = document.getElementById('smsCard');
         if (data.success) {
-          card.innerHTML = `<div class="sms-success">✅ Text sent to ${name}'s phone!</div>`;
+          card.innerHTML = `<div class="sms-success">✅ Text sent! Check the demo phone.</div>`;
           setTimeout(() => {
-            appendMessage('nora', 'NORA', `Thanks ${name}! I just sent this to your phone. 💜 Feel free to ask me anything else!`);
+            appendMessage('nora', 'NORA', `I just sent this to the demo phone! 💜 Feel free to ask me anything else!`);
             document.getElementById('chatContainer').scrollTop = 99999;
           }, 600);
         } else {
-          card.innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ ${data.error || 'Could not send. Please try again.'}</div>`;
+          card.innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ ${data.error || 'Could not send.'}</div>`;
         }
       } catch (err) {
-        document.getElementById('smsCard').innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ Network error. Please try again.</div>`;
+        document.getElementById('smsCard').innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ Network error.</div>`;
       }
     }
+    
   </script>
 </body>
 </html>

@@ -3,6 +3,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import Anthropic from '@anthropic-ai/sdk';
+import twilio from 'twilio';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,7 +15,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ── Clients ──────────────────────────────────────────────────────────────────
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-
+const twilioClient = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 // ── System prompt ─────────────────────────────────────────────────────────────
 const NORA_SYSTEM_PROMPT = `You are NORA (Navigating Obstetric Resources & Access), an AI maternal health companion built specifically to support Black women during pregnancy. You provide warm, culturally competent, evidence-based health information.
@@ -85,38 +89,23 @@ app.post('/api/chat', async (req, res) => {
 app.post('/api/sms', async (req, res) => {
   const { phone, message } = req.body;
 
-  if (!phone || !message) {
-    return res.status(400).json({ error: 'Phone and message required' });
-  }
-
-  const normalized = phone.replace(/\D/g, '');
-  const e164 = normalized.startsWith('1') ? `+${normalized}` : `+1${normalized}`;
-
-  const smsBody = message.length > 900 ? message.substring(0, 900) + '...\n\nConsult your healthcare provider for personalized advice.' : message;
-
   try {
-    console.log('Sending SMS to:', e164, 'key:', process.env.TEXTBELT_API_KEY ? 'loaded' : 'MISSING');
-    const response = await fetch('https://textbelt.com/text', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        phone: e164,
-        message: smsBody,
-        key: process.env.TEXTBELT_API_KEY,
-      }),
+    const { Resend } = await import('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: '2149806387@tmomail.net',
+      subject: '',
+      text: `💜 NORA: ${message.substring(0, 300)}`,
     });
 
-    const data = await response.json();
-    console.log('Textbelt response:', data);
+    console.log('Sent via Resend!');
+    res.json({ success: true });
 
-    if (data.success) {
-      res.json({ success: true });
-    } else {
-      res.status(500).json({ error: data.error || 'Failed to send SMS' });
-    }
   } catch (err) {
-    console.error('Textbelt error:', err.message);
-    res.status(500).json({ error: err.message || 'Failed to send SMS' });
+    console.error('Resend error:', err.message);
+    res.status(500).json({ error: err.message || 'Failed to send' });
   }
 });
 
