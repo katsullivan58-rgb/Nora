@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NORA — Live Demo</title>
+  <title>NORA (Live Demo)</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,8 +23,7 @@
     .suggested-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
     .suggested-btn { background: var(--cream); border: 1.5px solid rgba(61,26,75,0.15); border-radius: 100px; padding: 0.45rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--plum); cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
     .suggested-btn:hover { background: var(--blush); border-color: var(--rose); color: var(--rose); }
-    .chat-container { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
-    .message { display: flex; flex-direction: column; animation: msgIn 0.3s ease both; max-width: 75%; }
+    .chat-container { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; overflow-anchor: none; }    .message { display: flex; flex-direction: column; animation: msgIn 0.3s ease both; max-width: 75%; }
     @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .message.user { align-self: flex-end; align-items: flex-end; }
     .message.nora { align-self: flex-start; align-items: flex-start; }
@@ -90,12 +89,42 @@
   <script>
     let isLoading = false;
     let lastResponse = '';
+ 
+    // Read identity from localStorage (set by profile.html)
+    const noraUserId = localStorage.getItem('noraUserId') || null;
+    const noraName = localStorage.getItem('noraDisplayName') || null;
+ 
+    // Personalize the welcome message if we know their name
+    window.addEventListener('DOMContentLoaded', () => {
+      const noraStage = localStorage.getItem('noraStage');
 
+      const stageGreetings = {
+        preconception: `Hi${noraName ? ' ' + noraName : ''}! I'm NORA, your maternal health companion. 💜 I'm here to support your conception journey, from cycle tracking to preconception health. Ask me anything!`,
+        pregnant: `Hi${noraName ? ' ' + noraName : ''}! I'm NORA, your maternal health companion. 💜 I'm here to support you through your pregnancy, nutrition, symptoms, baby development, and more. Ask me anything!`,
+        postpartum: `Hi${noraName ? ' ' + noraName : ''}! I'm NORA, your maternal health companion. 💜 I'm here to support your postpartum recovery, from newborn care to your own healing. Ask me anything!`,
+      };
+
+      const greeting = stageGreetings[noraStage] || `Hi${noraName ? ' ' + noraName : ''}! I'm NORA, your maternal health companion. 💜 I'm here to support you through every stage of your reproductive journey. Ask me anything!`;
+
+      const welcomeBubble = document.querySelector('.message.nora .msg-bubble');
+      if (welcomeBubble) welcomeBubble.textContent = greeting;
+ 
+      // Show profile link in header if no profile set yet
+      if (!noraUserId) {
+        const header = document.querySelector('header');
+        const profileHint = document.createElement('a');
+        profileHint.href = 'profile.html';
+        profileHint.style.cssText = 'color:rgba(255,255,255,0.7);font-size:0.8rem;text-decoration:none;border:1px solid rgba(255,255,255,0.3);padding:0.3rem 0.8rem;border-radius:100px;';
+        profileHint.textContent = '✨ Personalize';
+        header.insertBefore(profileHint, header.querySelector('.back-link'));
+      }
+    });
+ 
     function fillQuestion(q) {
       document.getElementById('chatInput').value = q;
       document.getElementById('chatInput').focus();
     }
-
+ 
     async function sendMessage() {
       const input = document.getElementById('chatInput');
       const question = input.value.trim();
@@ -104,21 +133,24 @@
       isLoading = true;
       document.getElementById('sendBtn').disabled = true;
       const chat = document.getElementById('chatContainer');
-
+ 
       appendMessage('user', 'You', question);
-
+ 
       const typingEl = document.createElement('div');
       typingEl.className = 'message nora';
       typingEl.id = 'typing';
       typingEl.innerHTML = `<div class="msg-label">NORA</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
       chat.appendChild(typingEl);
-      chat.scrollTop = chat.scrollHeight;
-
+ 
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question, questionIndex: -1 })
+          body: JSON.stringify({
+            question,
+            questionIndex: -1,
+            userId: noraUserId,   // <-- sends profile ID so server can personalize
+          })
         });
         const data = await res.json();
         lastResponse = data.response;
@@ -129,21 +161,19 @@
         document.getElementById('typing')?.remove();
         appendMessage('nora', 'NORA', "I'm sorry, I had trouble connecting. Please try again.");
       }
-
+ 
       isLoading = false;
       document.getElementById('sendBtn').disabled = false;
-      chat.scrollTop = chat.scrollHeight;
     }
-
+ 
     function appendMessage(role, label, text) {
       const chat = document.getElementById('chatContainer');
       const el = document.createElement('div');
       el.className = `message ${role}`;
       el.innerHTML = `<div class="msg-label">${label}</div><div class="msg-bubble">${text.replace(/\n/g, '<br/>')}</div>`;
       chat.appendChild(el);
-      chat.scrollTop = chat.scrollHeight;
     }
-
+ 
     function appendSmsCard() {
       const chat = document.getElementById('chatContainer');
       const wrapper = document.createElement('div');
@@ -151,40 +181,74 @@
       wrapper.innerHTML = `
         <div class="sms-card" id="smsCard">
           <div class="sms-card-title">📱 Want this sent to your phone?</div>
-          <div class="sms-card-sub">Tap the button to receive this response as a text message.</div>
-          <button class="text-me-btn" onclick="sendSms()">Text me this 💜</button>
+          <div class="sms-card-sub">Enter your number and we'll text you NORA's response.</div>
+          <input
+            type="tel"
+            class="sms-input"
+            id="smsPhone"
+            placeholder="(555) 123-4567"
+            maxlength="14"
+            inputmode="numeric"
+            oninput="formatPhone(this)"
+          />
+          <div class="consent-row">
+            <input type="checkbox" id="smsConsent" />
+            <label for="smsConsent">I agree to receive a one-time text message from NORA with this response. Message rates may apply.</label>
+          </div>
+          <button class="text-me-btn" id="sendSmsBtn" onclick="sendSms()">Text me this 💜</button>
         </div>`;
       chat.appendChild(wrapper);
-      chat.scrollTop = chat.scrollHeight;
     }
-
+    
+    function formatPhone(input) {
+      let val = input.value.replace(/\D/g, '').slice(0, 10);
+      if (val.length >= 6) {
+        val = `(${val.slice(0,3)}) ${val.slice(3,6)}-${val.slice(6)}`;
+      } else if (val.length >= 3) {
+        val = `(${val.slice(0,3)}) ${val.slice(3)}`;
+      }
+      input.value = val;
+    }
+    
     async function sendSms() {
-      const btn = document.querySelector('.text-me-btn');
+      const phoneInput = document.getElementById('smsPhone');
+      const consent = document.getElementById('smsConsent');
+      const btn = document.getElementById('sendSmsBtn');
+    
+      if (!phoneInput.value || phoneInput.value.replace(/\D/g, '').length < 10) {
+        phoneInput.style.borderColor = 'var(--rose)';
+        phoneInput.focus();
+        return;
+      }
+    
+      if (!consent.checked) {
+        consent.parentElement.style.color = 'var(--rose)';
+        return;
+      }
+    
       btn.disabled = true;
       btn.textContent = 'Sending...';
-
+    
       try {
         const res = await fetch('/api/sms', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: '2149806387', message: lastResponse })
+          body: JSON.stringify({
+            phone: phoneInput.value,
+            message: lastResponse
+          })
         });
         const data = await res.json();
         const card = document.getElementById('smsCard');
         if (data.success) {
-          card.innerHTML = `<div class="sms-success">✅ Text sent! Check the demo phone.</div>`;
-          setTimeout(() => {
-            appendMessage('nora', 'NORA', `I just sent this to the demo phone! 💜 Feel free to ask me anything else!`);
-            document.getElementById('chatContainer').scrollTop = 99999;
-          }, 600);
+          card.innerHTML = `<div class="sms-success">✅ Text sent to ${phoneInput.value}! 💜</div>`;
         } else {
           card.innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ ${data.error || 'Could not send.'}</div>`;
         }
       } catch (err) {
-        document.getElementById('smsCard').innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ Network error.</div>`;
+        document.getElementById('smsCard').innerHTML = `<div class="sms-success" style="color:var(--rose)">❌ Network error  please try again.</div>`;
       }
     }
-    
   </script>
 </body>
 </html>
