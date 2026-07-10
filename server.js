@@ -223,9 +223,14 @@ app.post('/api/sms', async (req, res) => {
     res.status(500).json({ error: err.message || 'Failed to send text message' });
   }
 });
-
 // ── Start server ───────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n🌸 NORA server running on http://localhost:${PORT}\n`);
-});
+
+// Only listen when running locally — Vercel imports the app directly
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`\n🌸 NORA server running on http://localhost:${PORT}\n`);
+  });
+}
+
+export default app;
