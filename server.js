@@ -206,7 +206,7 @@ app.post('/api/sms', async (req, res) => {
     );
 
     await client.messages.create({
-      body: `💜 NORA: ${message.substring(0, 100)}`,
+      body: `NORA: ${message.substring(0, 130)}. Reply STOP to opt out, HELP for support.`,
       from: process.env.TWILIO_PHONE_NUMBER,
       to: formatted,
     });
