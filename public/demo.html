@@ -19,6 +19,9 @@
     .header-center { font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
     .back-link { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.85rem; }
     .back-link:hover { color: white; }
+    .header-links { display: flex; align-items: center; gap: 0.9rem; }
+    .header-legal-link { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.78rem; }
+    .header-legal-link:hover { color: white; text-decoration: underline; }
     .suggested-bar { background: white; border-bottom: 1px solid rgba(61,26,75,0.08); padding: 0.75rem 1.5rem; display: flex; gap: 0.6rem; align-items: center; flex-shrink: 0; overflow-x: auto; }
     .suggested-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
     .suggested-btn { background: var(--cream); border: 1.5px solid rgba(61,26,75,0.15); border-radius: 100px; padding: 0.45rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--plum); cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
@@ -42,9 +45,11 @@
     .sms-card-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
     .sms-input { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid rgba(61,26,75,0.15); border-radius: 0.65rem; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s; margin-bottom: 0.6rem; }
     .sms-input:focus { border-color: var(--rose); }
-    .consent-row { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.9rem; }
+    .consent-row { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem; }
     .consent-row input[type="checkbox"] { margin-top: 2px; accent-color: var(--rose); flex-shrink: 0; }
     .consent-row label { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+    .consent-links { font-size: 0.7rem; color: var(--muted); margin-bottom: 0.9rem; line-height: 1.4; }
+    .consent-links a { color: var(--rose); text-decoration: underline; }
     .text-me-btn { width: 100%; background: var(--rose); color: white; border: none; border-radius: 0.65rem; padding: 0.8rem; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
     .text-me-btn:hover:not(:disabled) { background: var(--plum); }
     .text-me-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -55,13 +60,20 @@
     .send-btn { width: 46px; height: 46px; background: var(--plum); color: white; border: none; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
     .send-btn:hover:not(:disabled) { background: var(--rose); transform: scale(1.05); }
     .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-footer-links { flex-shrink: 0; background: white; border-top: 1px solid rgba(61,26,75,0.08); padding: 0.4rem 1.5rem; text-align: center; font-size: 0.7rem; color: var(--muted); }
+    .page-footer-links a { color: var(--rose); text-decoration: none; margin: 0 0.4rem; }
+    .page-footer-links a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <header>
     <div class="logo">N<span>O</span>RA</div>
     <div class="header-center">Talk to NORA</div>
-    <a href="index.html" class="back-link">← Home</a>
+    <div class="header-links">
+      <a href="/privacy-policy.html" class="header-legal-link">Privacy Policy</a>
+      <a href="/terms-and-conditions.html" class="header-legal-link">Terms & Conditions</a>
+      <a href="index.html" class="back-link">← Home</a>
+    </div>
   </header>
 
   <div class="suggested-bar">
@@ -84,6 +96,10 @@
   <div class="input-bar">
     <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question..." onkeydown="if(event.key==='Enter') sendMessage()" />
     <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
+
+  <div class="page-footer-links">
+    © 2026 NORA Maternal Health · <a href="/privacy-policy.html">Privacy Policy</a> · <a href="/terms-and-conditions.html">Terms &amp; Conditions</a>
   </div>
 
   <script>
@@ -111,12 +127,12 @@
  
       // Show profile link in header if no profile set yet
       if (!noraUserId) {
-        const header = document.querySelector('header');
+        const headerLinks = document.querySelector('.header-links');
         const profileHint = document.createElement('a');
         profileHint.href = 'profile.html';
         profileHint.style.cssText = 'color:rgba(255,255,255,0.7);font-size:0.8rem;text-decoration:none;border:1px solid rgba(255,255,255,0.3);padding:0.3rem 0.8rem;border-radius:100px;';
         profileHint.textContent = '✨ Personalize';
-        header.insertBefore(profileHint, header.querySelector('.back-link'));
+        headerLinks.insertBefore(profileHint, headerLinks.querySelector('.back-link'));
       }
     });
  
@@ -194,6 +210,9 @@
           <div class="consent-row">
             <input type="checkbox" id="smsConsent" />
             <label for="smsConsent">I agree to receive a one-time text message from NORA with this response. Message rates may apply.</label>
+          </div>
+          <div class="consent-links">
+            By opting in, you agree to NORA's <a href="/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/terms-and-conditions.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.
           </div>
           <button class="text-me-btn" id="sendSmsBtn" onclick="sendSms()">Text me this 💜</button>
         </div>`;
