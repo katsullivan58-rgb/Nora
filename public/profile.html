@@ -40,7 +40,7 @@
     .form-group { margin-bottom: 1.4rem; }
     label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--plum); margin-bottom: 0.4rem; }
     label .optional { font-weight: 400; color: var(--muted); font-size: 0.78rem; margin-left: 0.3rem; }
-    input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 0.85rem 1.1rem; border: 1.5px solid rgba(61,26,75,0.15); border-radius: 0.65rem; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
+    input[type="text"], input[type="number"], input[type="date"], input[type="tel"] { width: 100%; padding: 0.85rem 1.1rem; border: 1.5px solid rgba(61,26,75,0.15); border-radius: 0.65rem; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
     input:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(196,86,106,0.12); }
     input::placeholder { color: rgba(122,94,138,0.45); }
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -56,6 +56,12 @@
     .trimester-labels span, .month-labels span { font-size: 0.68rem; color: var(--muted); font-weight: 500; }
     .info-tip { background: rgba(212,168,67,0.08); border: 1px solid rgba(212,168,67,0.25); border-radius: 0.65rem; padding: 0.75rem 1rem; font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.4rem; }
     .info-tip strong { color: var(--plum); }
+    .sms-section-label { font-size: 0.85rem; font-weight: 600; color: var(--plum); margin-bottom: 0.75rem; }
+    .consent-row { display: flex; align-items: flex-start; gap: 0.55rem; margin-bottom: 0.6rem; }
+    .consent-row input[type="checkbox"] { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--rose); flex-shrink: 0; cursor: pointer; }
+    .consent-row label { font-size: 0.78rem; font-weight: 400; color: var(--muted); line-height: 1.5; margin-bottom: 0; cursor: pointer; }
+    .consent-links { font-size: 0.72rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.5; }
+    .consent-links a { color: var(--rose); }
     .privacy-note { display: flex; align-items: flex-start; gap: 0.6rem; background: rgba(244,193,209,0.2); border: 1px solid var(--blush); border-radius: 0.75rem; padding: 0.9rem 1rem; margin-bottom: 1.8rem; }
     .privacy-note .icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     .privacy-note p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
@@ -205,6 +211,24 @@
           <input type="text" id="zipCode" placeholder="e.g. 76102" maxlength="5" inputmode="numeric" />
         </div>
 
+        <hr class="section-divider" />
+
+        <!-- SMS opt-in: dedicated, standalone consent step (separate from any message-send action) -->
+        <div class="sms-section-label">Get answers by text <span class="optional">(optional)</span></div>
+
+        <div class="form-group">
+          <label for="phoneNumber">Phone number <span class="optional">(optional)</span></label>
+          <input type="tel" id="phoneNumber" placeholder="(555) 123-4567" maxlength="14" inputmode="numeric" autocomplete="tel" oninput="formatPhone(this)" />
+        </div>
+
+        <div class="consent-row">
+          <input type="checkbox" id="smsConsent" />
+          <label for="smsConsent">I agree to receive SMS text messages from NORA at the phone number provided above. I'll get an immediate one-time confirmation text when I opt in, and then a one-time message containing NORA's response each time I request one — message frequency varies based on how often I make that request, and there is no other recurring or scheduled messaging. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of using NORA.</label>
+        </div>
+        <div class="consent-links">
+          View NORA's <a href="/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/terms-and-conditions.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.
+        </div>
+
         <div class="privacy-note">
           <span class="icon">🔒</span>
           <p><strong>Your privacy matters.</strong> This information is used only to personalize your NORA experience. We never sell your data or share it with third parties. Read our full <a href="/privacy-policy.html">Privacy Policy</a>.</p>
@@ -281,6 +305,16 @@
       else badge.textContent = 'Extended postpartum';
     }
 
+    function formatPhone(input) {
+      let val = input.value.replace(/\D/g, '').slice(0, 10);
+      if (val.length >= 6) {
+        val = `(${val.slice(0,3)}) ${val.slice(3,6)}-${val.slice(6)}`;
+      } else if (val.length >= 3) {
+        val = `(${val.slice(0,3)}) ${val.slice(3)}`;
+      }
+      input.value = val;
+    }
+
     async function loadProfile() {
       try {
         const res = await fetch(`/api/profile/${getUserId()}`);
@@ -289,6 +323,11 @@
         const p = data.profile;
         if (p.display_name) document.getElementById('displayName').value = p.display_name;
         if (p.zip_code) document.getElementById('zipCode').value = p.zip_code;
+        if (p.phone_number) {
+          document.getElementById('phoneNumber').value = p.phone_number;
+          formatPhone(document.getElementById('phoneNumber'));
+        }
+        if (p.sms_consent) document.getElementById('smsConsent').checked = true;
         if (p.journey_stage) {
           selectStage(p.journey_stage);
           if (p.journey_stage === 'pregnant') {
@@ -316,9 +355,21 @@
       const btnText = document.getElementById('saveBtnText');
       const display_name = document.getElementById('displayName').value.trim();
       const zip_code = document.getElementById('zipCode').value.trim();
+      const phoneDigits = document.getElementById('phoneNumber').value.replace(/\D/g, '');
+      const smsConsentChecked = document.getElementById('smsConsent').checked;
 
       if (zip_code && !/^\d{5}$/.test(zip_code)) {
         showToast('Please enter a valid 5-digit zip code', 'error');
+        return;
+      }
+
+      if (smsConsentChecked && phoneDigits.length < 10) {
+        showToast('Please enter a valid phone number to enable text alerts', 'error');
+        return;
+      }
+
+      if (phoneDigits.length > 0 && phoneDigits.length < 10) {
+        showToast('Please enter a valid 10-digit phone number', 'error');
         return;
       }
 
@@ -332,6 +383,9 @@
         lmp_date: null,
         cycle_length: null,
         baby_birth_date: null,
+        phone_number: phoneDigits.length === 10 ? phoneDigits : null,
+        sms_consent: phoneDigits.length === 10 ? smsConsentChecked : false,
+        sms_consent_date: (phoneDigits.length === 10 && smsConsentChecked) ? new Date().toISOString() : null,
       };
 
       if (selectedStage === 'pregnant') {
@@ -361,6 +415,13 @@
         if (display_name) localStorage.setItem('noraDisplayName', display_name);
         if (selectedStage) localStorage.setItem('noraStage', selectedStage);
         if (selectedWeek) localStorage.setItem('noraWeek', selectedWeek);
+
+        if (payload.phone_number) {
+          localStorage.setItem('noraPhone', document.getElementById('phoneNumber').value);
+        } else {
+          localStorage.removeItem('noraPhone');
+        }
+        localStorage.setItem('noraSmsConsent', payload.sms_consent ? 'true' : 'false');
 
         const msgs = {
           preconception: 'NORA is ready to support your conception journey. 🌱 Taking you to your personalized chat now...',

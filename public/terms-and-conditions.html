@@ -15,16 +15,16 @@
       --muted: #7a6672;
       --border: #e8dde5;
     }
- 
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
     body {
       font-family: 'Inter', sans-serif;
       background: var(--cream);
       color: var(--text);
       line-height: 1.7;
     }
- 
+
     header {
       background: var(--plum);
       padding: 1.25rem 2rem;
@@ -50,7 +50,7 @@
     .header-back-link:hover {
       color: white;
     }
- 
+
     .logo-mark {
       width: 36px;
       height: 36px;
@@ -64,14 +64,14 @@
       color: white;
       flex-shrink: 0;
     }
- 
+
     .logo-text {
       font-family: 'DM Serif Display', serif;
       font-size: 1.4rem;
       color: white;
       letter-spacing: 0.05em;
     }
- 
+
     .logo-sub {
       font-size: 0.7rem;
       color: rgba(255,255,255,0.55);
@@ -79,25 +79,25 @@
       text-transform: uppercase;
       margin-top: -2px;
     }
- 
+
     .hero {
       background: linear-gradient(160deg, var(--plum) 0%, var(--plum-light) 100%);
       padding: 3rem 2rem 2.5rem;
       text-align: center;
     }
- 
+
     .hero h1 {
       font-family: 'DM Serif Display', serif;
       font-size: clamp(1.8rem, 4vw, 2.8rem);
       color: white;
       margin-bottom: 0.5rem;
     }
- 
+
     .hero p {
       color: rgba(255,255,255,0.65);
       font-size: 0.9rem;
     }
- 
+
     .effective-badge {
       display: inline-block;
       background: rgba(255,255,255,0.12);
@@ -109,13 +109,13 @@
       margin-top: 0.75rem;
       letter-spacing: 0.04em;
     }
- 
+
     main {
       max-width: 760px;
       margin: 0 auto;
       padding: 3rem 2rem 5rem;
     }
- 
+
     /* SMS Quick-reference box — highlighted for Twilio compliance */
     .sms-summary {
       background: var(--plum);
@@ -124,7 +124,7 @@
       padding: 1.75rem 2rem;
       margin-bottom: 2.5rem;
     }
- 
+
     .sms-summary h2 {
       font-family: 'DM Serif Display', serif;
       font-size: 1.15rem;
@@ -133,13 +133,13 @@
       margin-bottom: 1rem;
       padding: 0;
     }
- 
+
     .sms-summary .sms-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem 1.5rem;
     }
- 
+
     .sms-grid-item label {
       display: block;
       font-size: 0.72rem;
@@ -148,22 +148,22 @@
       color: rgba(255,255,255,0.5);
       margin-bottom: 0.15rem;
     }
- 
+
     .sms-grid-item p {
       font-size: 0.9rem;
       color: rgba(255,255,255,0.9);
       margin: 0;
     }
- 
+
     .sms-grid-item strong { color: white; }
- 
+
     .sms-commands {
       margin-top: 1.25rem;
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
     }
- 
+
     .cmd-pill {
       background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.2);
@@ -171,10 +171,10 @@
       padding: 0.5rem 1rem;
       font-size: 0.88rem;
     }
- 
+
     .cmd-pill strong { color: white; display: block; font-size: 1rem; letter-spacing: 0.05em; }
     .cmd-pill span { color: rgba(255,255,255,0.65); font-size: 0.8rem; }
- 
+
     .toc {
       background: white;
       border: 1px solid var(--border);
@@ -182,21 +182,21 @@
       padding: 1.5rem 2rem;
       margin-bottom: 2.5rem;
     }
- 
+
     .toc h2 {
       font-family: 'DM Serif Display', serif;
       font-size: 1rem;
       color: var(--plum);
       margin-bottom: 0.75rem;
     }
- 
+
     .toc ol { padding-left: 1.2rem; }
     .toc li { margin-bottom: 0.3rem; }
     .toc a { color: var(--rose); text-decoration: none; font-size: 0.88rem; }
     .toc a:hover { text-decoration: underline; }
- 
+
     section { margin-bottom: 2.5rem; }
- 
+
     h2 {
       font-family: 'DM Serif Display', serif;
       font-size: 1.35rem;
@@ -205,12 +205,12 @@
       padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--border);
     }
- 
+
     p { margin-bottom: 0.85rem; font-size: 0.93rem; }
- 
+
     ul, ol { padding-left: 1.4rem; margin-bottom: 0.85rem; }
     li { margin-bottom: 0.4rem; font-size: 0.93rem; }
- 
+
     .highlight-box {
       background: #fdf0f4;
       border-left: 3px solid var(--rose);
@@ -219,7 +219,7 @@
       margin: 1.25rem 0;
       font-size: 0.9rem;
     }
- 
+
     .contact-card {
       background: var(--plum);
       color: white;
@@ -227,10 +227,10 @@
       padding: 1.5rem 2rem;
       margin-top: 1rem;
     }
- 
+
     .contact-card p { color: rgba(255,255,255,0.8); margin-bottom: 0.4rem; }
     .contact-card a { color: var(--rose); }
- 
+
     footer {
       text-align: center;
       padding: 1.5rem;
@@ -238,16 +238,16 @@
       color: var(--muted);
       border-top: 1px solid var(--border);
     }
- 
+
     footer a { color: var(--rose); text-decoration: none; }
- 
+
     @media (max-width: 500px) {
       .sms-summary .sms-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
- 
+
 <header>
   <div class="header-left">
     <div class="logo-mark">N</div>
@@ -258,15 +258,15 @@
   </div>
   <a href="/index.html" class="header-back-link">← Home</a>
 </header>
- 
+
 <div class="hero">
   <h1>Terms & Conditions</h1>
   <p>Please read these terms carefully before using NORA</p>
   <div class="effective-badge">Effective Date: June 25, 2026</div>
 </div>
- 
+
 <main>
- 
+
   <!-- SMS Quick-Reference (Twilio required info, prominent) -->
   <div class="sms-summary">
     <h2>📱 SMS Program Summary</h2>
@@ -276,12 +276,16 @@
         <p>NORA Maternal Health Companion</p>
       </div>
       <div class="sms-grid-item">
+        <label>How to Opt In</label>
+        <p>Enter your phone number and check the consent box on your NORA profile</p>
+      </div>
+      <div class="sms-grid-item">
         <label>Description</label>
-        <p>A one-time text of NORA's response, sent only when you request it</p>
+        <p>A one-time confirmation text when you opt in, then a one-time text of NORA's response whenever you request one</p>
       </div>
       <div class="sms-grid-item">
         <label>Message Frequency</label>
-        <p>One message per request. No recurring or scheduled messages.</p>
+        <p>One confirmation message at opt-in, then one message per request. No other recurring or scheduled messages.</p>
       </div>
       <div class="sms-grid-item">
         <label>Rates</label>
@@ -307,7 +311,7 @@
       </div>
     </div>
   </div>
- 
+
   <div class="toc">
     <h2>Contents</h2>
     <ol>
@@ -323,19 +327,19 @@
       <li><a href="#contact">Contact & Support</a></li>
     </ol>
   </div>
- 
+
   <section id="acceptance">
     <h2>1. Acceptance of Terms</h2>
     <p>By accessing or using NORA ("Navigating Obstetric Resources & Access"), you agree to be bound by these Terms and Conditions and our <a href="/privacy-policy.html" style="color:var(--rose);">Privacy Policy</a>. If you do not agree to these terms, please do not use NORA.</p>
     <p>These terms apply to all users, including visitors, registered users, and SMS program participants.</p>
   </section>
- 
+
   <section id="service">
     <h2>2. Description of Service</h2>
     <p>NORA is an AI-powered maternal health companion that provides informational support, resource navigation, and wellness guidance to individuals during the trying-to-conceive, pregnancy, and postpartum stages of their journey.</p>
     <p>NORA may be accessed via web interface and, where opted in, via SMS text message. Features include personalized responses based on your journey stage, local resource matching, and the option to receive a one-time text of any NORA response.</p>
   </section>
- 
+
   <section id="medical-disclaimer">
     <h2>3. Medical Disclaimer</h2>
     <div class="highlight-box">
@@ -345,22 +349,23 @@
     <p>Always consult your doctor, midwife, or other qualified health professional regarding any questions you may have about a medical condition, pregnancy complication, or treatment plan. Never disregard professional medical advice or delay seeking it because of information you received from NORA.</p>
     <p><strong>If you are experiencing a medical emergency, call 911 or your local emergency services immediately.</strong></p>
   </section>
- 
+
   <section id="sms-terms">
     <h2>4. SMS Messaging Terms</h2>
     <p>By opting in to NORA's SMS program, you agree to the following terms:</p>
- 
+
     <p><strong>Program Name:</strong> NORA Maternal Health Companion</p>
-    <p><strong>Program Description:</strong> NORA sends a one-time SMS message containing NORA's response when a user requests that a specific answer be texted to their phone. Messages are not recurring or scheduled.</p>
-    <p><strong>Message Frequency:</strong> One message is sent per user request. There is no ongoing or scheduled messaging — you will only receive a text when you actively opt in after a specific response.</p>
+    <p><strong>How to Opt In:</strong> You opt in to NORA's SMS program on your NORA profile page, by entering your phone number and checking the SMS consent box. This is a single, standalone opt-in step — separate from any individual chat response — and the checkbox is unchecked by default.</p>
+    <p><strong>Program Description:</strong> Immediately after you opt in, you will receive a one-time confirmation text welcoming you to the program. After that, you may ask NORA to text you a one-time copy of any specific response NORA gives you in the chat interface. Messages are not recurring or scheduled.</p>
+    <p><strong>Message Frequency:</strong> You will receive one confirmation message immediately after opting in, and then one additional message each time you request that a response be texted to you. Message frequency varies based on how often you make that request — there is no ongoing or scheduled messaging beyond the opt-in confirmation, and you will never receive a response text unless you have opted in and actively requested one.</p>
     <p><strong>Message and Data Rates:</strong> Message and data rates may apply. Charges are billed by your mobile carrier according to your plan. NORA does not charge for SMS messages directly.</p>
-    <p><strong>Opt-Out:</strong> You may cancel SMS messages at any time. Reply <strong>STOP</strong> to any NORA text message to unsubscribe. After texting STOP, you will receive one final confirmation message. No further messages will be sent unless you re-enroll.</p>
+    <p><strong>Opt-Out:</strong> You may cancel SMS messages at any time. Reply <strong>STOP</strong> to any NORA text message, or uncheck the SMS consent box on your profile, to unsubscribe. After texting STOP, you will receive one final confirmation message. No further messages will be sent unless you re-enroll.</p>
     <p><strong>Help:</strong> For assistance with the SMS program, reply <strong>HELP</strong> to any NORA text message, or contact us at <a href="mailto:jordanw2200@gmail.com" style="color:var(--rose);">jordanw2200@gmail.com</a>.</p>
     <p><strong>Supported Carriers:</strong> NORA's SMS program is available on major U.S. carriers including AT&T, Verizon, T-Mobile, Sprint, and others. Carrier support is not guaranteed for all carriers.</p>
     <p><strong>No Third-Party Sharing:</strong> Your mobile phone number will not be shared with or sold to third parties for marketing or promotional purposes.</p>
     <p><strong>Consent:</strong> Participation in the SMS program is entirely optional. Consent to receive SMS messages is not required to use the NORA web application.</p>
   </section>
- 
+
   <section id="user-conduct">
     <h2>5. User Conduct</h2>
     <p>You agree to use NORA only for lawful purposes and in accordance with these Terms. You agree not to:</p>
@@ -371,31 +376,31 @@
       <li>Use NORA in any way that violates applicable local, state, or federal laws or regulations.</li>
     </ul>
   </section>
- 
+
   <section id="privacy">
     <h2>6. Privacy</h2>
     <p>Your use of NORA is also governed by our <a href="/privacy-policy.html" style="color:var(--rose);">Privacy Policy</a>, which is incorporated into these Terms by reference. Please review the Privacy Policy to understand how we collect, use, and protect your information.</p>
     <p>We collect only the minimum information necessary to provide NORA's services. We do not sell your personal information or share it with third parties for marketing purposes.</p>
   </section>
- 
+
   <section id="ip">
     <h2>7. Intellectual Property</h2>
     <p>All content, branding, and materials related to NORA — including the name, logo, interface design, and AI-generated responses — are the intellectual property of NORA Maternal Health and may not be reproduced, distributed, or used without express written permission.</p>
     <p>You retain ownership of any personal information you provide to NORA. By using NORA, you grant us a limited license to process that information to provide the service as described in these Terms and our Privacy Policy.</p>
   </section>
- 
+
   <section id="liability">
     <h2>8. Limitation of Liability</h2>
     <p>To the fullest extent permitted by applicable law, NORA and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of, or inability to use, NORA or its SMS service.</p>
     <p>NORA is provided "as is" without warranties of any kind, express or implied, including but not limited to warranties of accuracy, fitness for a particular purpose, or non-infringement. NORA does not guarantee that information provided is complete, accurate, or up-to-date.</p>
   </section>
- 
+
   <section id="changes">
     <h2>9. Changes to Terms</h2>
     <p>We reserve the right to modify these Terms at any time. When changes are made, we will update the "Effective Date" at the top of this page. Your continued use of NORA after changes are posted constitutes your acceptance of the revised Terms.</p>
     <p>For material changes to the SMS program terms, we will notify active SMS subscribers via text message prior to the changes taking effect.</p>
   </section>
- 
+
   <section id="contact">
     <h2>10. Contact & Support</h2>
     <p>For questions about these Terms, the SMS program, or NORA generally:</p>
@@ -406,12 +411,12 @@
       <p>SMS support: Reply <strong>HELP</strong> to any message from NORA</p>
     </div>
   </section>
- 
+
 </main>
- 
+
 <footer>
   <p>© 2026 NORA Maternal Health · <a href="/privacy-policy.html">Privacy Policy</a> · <a href="/">Back to NORA</a></p>
 </footer>
- 
+
 </body>
 </html>

@@ -21,6 +21,11 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
+const twilioClient = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
+
 // ── System prompt builder ─────────────────────────────────────────────────────
 // Builds a personalized prompt if we have profile data, generic if not
 function buildSystemPrompt(profile = null) {
@@ -117,10 +122,46 @@ app.get('/api/profile/:userId', async (req, res) => {
 });
 
 // POST /api/profile — create or update a user's profile
+// Also handles the SMS opt-in captured on the profile page: phone_number +
+// sms_consent are the standalone, dedicated consent step (separate from the
+// "text me this" send action in chat). We preserve the original consent
+// timestamp across re-saves instead of trusting whatever the client sends,
+// so there's a durable, server-side record of when consent was first given.
 app.post('/api/profile', async (req, res) => {
-  const { userId, display_name, pregnancy_week, due_date, zip_code, journey_stage, lmp_date, cycle_length, baby_birth_date } = req.body;
+  const {
+    userId,
+    display_name,
+    pregnancy_week,
+    due_date,
+    zip_code,
+    journey_stage,
+    lmp_date,
+    cycle_length,
+    baby_birth_date,
+    phone_number,
+    sms_consent,
+  } = req.body;
 
   if (!userId) return res.status(400).json({ error: 'userId required' });
+
+  const smsConsentBool = !!sms_consent;
+
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('sms_consent, sms_consent_date')
+    .eq('id', userId)
+    .single();
+
+  // First time this user has ever checked the SMS box — this is what triggers
+  // the opt-in confirmation text below.
+  const isNewOptIn = smsConsentBool && !(existing && existing.sms_consent);
+
+  let sms_consent_date = null;
+  if (smsConsentBool) {
+    sms_consent_date = (existing && existing.sms_consent && existing.sms_consent_date)
+      ? existing.sms_consent_date
+      : new Date().toISOString();
+  }
 
   const { data, error } = await supabase
     .from('profiles')
@@ -134,12 +175,39 @@ app.post('/api/profile', async (req, res) => {
       lmp_date: lmp_date || null,
       cycle_length: cycle_length ? parseInt(cycle_length) : null,
       baby_birth_date: baby_birth_date || null,
+      phone_number: phone_number || null,
+      sms_consent: smsConsentBool,
+      sms_consent_date,
       updated_at: new Date().toISOString(),
     })
     .select()
     .single();
 
   if (error) return res.status(500).json({ error: error.message });
+
+  // Twilio requires an immediate opt-in confirmation message for every
+  // recurring campaign, regardless of opt-in method. Send it the moment
+  // consent is first given — not on every subsequent profile save.
+  if (isNewOptIn && phone_number) {
+    const cleaned = String(phone_number).replace(/[^\d+]/g, '');
+    const formatted = cleaned.startsWith('+') ? cleaned : `+1${cleaned}`;
+
+    if (formatted.length >= 11) {
+      try {
+        await twilioClient.messages.create({
+          body: `Welcome to NORA! You're opted in to receive text replies to your questions. Message frequency varies. Msg & data rates may apply. Reply STOP to opt out, HELP for help.`,
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: formatted,
+        });
+        console.log(`Opt-in confirmation sent to ${formatted}`);
+      } catch (smsErr) {
+        // Don't fail the profile save over a confirmation text failure —
+        // the profile data itself is still valid — but log it so it can
+        // be investigated.
+        console.error('Opt-in confirmation SMS error:', smsErr.message);
+      }
+    }
+  }
 
   res.json({ profile: data });
 });
@@ -184,11 +252,27 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // ── SMS endpoint ──────────────────────────────────────────────────────────────
+// Consent for the SMS program is captured once, up front, on the profile page
+// (dedicated opt-in step). This endpoint never trusts the client's word for
+// it — every send re-verifies sms_consent is on file in Supabase before a
+// message goes out through Twilio, and cross-checks the destination number
+// against the one consent was actually given for.
 app.post('/api/sms', async (req, res) => {
-  const { phone, message } = req.body;
+  const { userId, phone, message } = req.body;
 
   if (!phone) return res.status(400).json({ error: 'Phone number required' });
   if (!message) return res.status(400).json({ error: 'Message required' });
+  if (!userId) return res.status(403).json({ error: 'SMS consent could not be verified. Please opt in from your profile.' });
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('phone_number, sms_consent')
+    .eq('id', userId)
+    .single();
+
+  if (profileError || !profile || !profile.sms_consent) {
+    return res.status(403).json({ error: 'SMS consent not on file. Please opt in from your profile.' });
+  }
 
   // Sanitize phone — strip everything except digits and leading +
   const cleaned = phone.replace(/[^\d+]/g, '');
@@ -199,14 +283,16 @@ app.post('/api/sms', async (req, res) => {
     return res.status(400).json({ error: 'Please enter a valid phone number' });
   }
 
-  try {
-    const client = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
+  // The number being texted must match the number consent was given for
+  const onFileDigits = (profile.phone_number || '').replace(/\D/g, '');
+  const requestDigits = cleaned.replace(/\D/g, '');
+  if (onFileDigits && requestDigits && onFileDigits !== requestDigits) {
+    return res.status(403).json({ error: 'Phone number does not match the consented number on file.' });
+  }
 
-    await client.messages.create({
-      body: `NORA: ${message.substring(0, 130)}. Reply STOP to opt out, HELP for support.`,
+  try {
+    await twilioClient.messages.create({
+      body: `NORA: ${message.substring(0, 130)}. Reply STOP to opt out, HELP for help.`,
       from: process.env.TWILIO_PHONE_NUMBER,
       to: formatted,
     });
